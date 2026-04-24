@@ -22,6 +22,38 @@ function App() {
     return new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Nairobi', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
   });
   
+  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [sessionTime, setSessionTime] = useState(() => {
+    return parseInt(localStorage.getItem('neuro_session_time') || "0");
+  });
+
+  useEffect(() => {
+    let interval = null;
+    if (isTimerRunning) {
+      setLastAction(`DEEP WORK SESSION INITIATED: ${new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Nairobi', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date())}`);
+      interval = setInterval(() => {
+        setSessionTime(prev => {
+          const newTime = prev + 1;
+          localStorage.setItem('neuro_session_time', newTime.toString());
+          return newTime;
+        });
+      }, 1000);
+    } else {
+      if (sessionTime > 0) {
+         setLastAction(`DEEP WORK SESSION TERMINATED. TOTAL TIME: ${formatTime(sessionTime)}`);
+      }
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [isTimerRunning]);
+
+  const formatTime = (totalSeconds) => {
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+  
   const [milestones, setMilestones] = useState(() => {
     const saved = localStorage.getItem('neuro_milestones');
     return saved ? JSON.parse(saved) : [];
@@ -191,16 +223,38 @@ function App() {
                   />
                </div>
                <div className="flex flex-col gap-12 h-full xl:h-[850px]">
-                  <ExecutiveSecretary tasks={currentTasks} remainingHours={remainingHours} />
-                  <BeastQuote />
-                  <Calendar dateKey={dateKey} setDateKey={setDateKey} />
+                   <ExecutiveSecretary tasks={currentTasks} remainingHours={remainingHours} />
+                   <BeastQuote />
+                   <div className="glass p-6 flex-1 flex flex-col items-center justify-center">
+                      <div className="text-xs font-semibold uppercase tracking-widest text-white/50 mb-4">Deep Work Session</div>
+                      <div className="text-5xl font-mono font-bold tracking-tighter text-white mb-6">
+                        {formatTime(sessionTime)}
+                      </div>
+                      <div className="flex items-center gap-4 w-full">
+                         <button 
+                           onClick={() => setIsTimerRunning(true)} 
+                           className={`flex-1 py-4 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${isTimerRunning ? 'bg-green-500/10 text-green-500/50 border border-green-500/20' : 'bg-green-500 text-white shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:bg-green-400 hover:scale-105'}`}
+                           disabled={isTimerRunning}
+                         >
+                           Start
+                         </button>
+                         <button 
+                           onClick={() => setIsTimerRunning(false)} 
+                           className={`flex-1 py-4 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${!isTimerRunning ? 'bg-red-500/10 text-red-500/50 border border-red-500/20' : 'bg-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.4)] hover:bg-red-400 hover:scale-105'}`}
+                           disabled={!isTimerRunning}
+                         >
+                           Stop
+                         </button>
+                      </div>
+                   </div>
+                   <Calendar dateKey={dateKey} setDateKey={setDateKey} />
                </div>
             </div>
             <SchedulePulse tasks={currentTasks} />
           </div>
 
           <div className="col-span-12 xl:col-span-4 flex flex-col gap-12 h-full xl:h-[850px]">
-             <NeuralPerformance />
+             <NeuralPerformance sessionTime={sessionTime} />
              <MilestoneTracker milestones={milestones} onAdd={() => setMilestones([...milestones, {id: Date.now(), title: prompt("Goal:"), progress: 0, status: 'in-progress'}])} />
              <div className="glass p-10 border-violet-500/20 flex-1 flex flex-col">
                 <h3 className="text-sm font-semibold uppercase tracking-widest text-white/50 mb-6">Intelligence Stream</h3>
@@ -257,16 +311,32 @@ function App() {
 
       <AnimatePresence>
         {isFocusMode && (
-          <div className="fixed inset-0 z-[300] flex items-center justify-center p-6">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-[#05010a] backdrop-blur-3xl" />
-            <motion.div initial={{ scale: 0.9, opacity: 0, y: 50 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 50 }} className="relative z-10 w-full max-w-5xl flex flex-col items-center text-center">
+          <div className="fixed inset-0 z-[300] flex items-center justify-center p-6 hypnotic-bg overflow-hidden">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+            
+            {/* Hypnotic Flashing Quotes Background */}
+            <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-around opacity-20 overflow-hidden">
+               {["FOCUS", "EXECUTE", "NO EXCUSES", "CONQUER", "OVERCOME", "1000%"].map((word, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: [0, 1, 0], scale: [0.8, 1.2, 0.8] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+                    className="text-[10vw] font-black font-beast text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-cyan-500 tracking-tighter whitespace-nowrap"
+                  >
+                    {word}
+                  </motion.div>
+               ))}
+            </div>
+
+            <motion.div initial={{ scale: 0.9, opacity: 0, y: 50 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 50 }} className="relative z-10 w-full max-w-5xl flex flex-col items-center text-center p-12 glass border-pink-500/50 shadow-[0_0_100px_rgba(255,0,122,0.3)]">
               <div className="mb-12">
-                 <span className="px-6 py-2 rounded-full border border-pink-500/30 text-pink-400 text-[10px] font-bold uppercase tracking-[0.3em] bg-pink-500/10 shadow-[0_0_20px_rgba(255,0,122,0.2)]">Absolute Focus Protocol</span>
+                 <span className="px-6 py-2 rounded-full border border-pink-500/30 text-pink-400 text-[10px] font-bold uppercase tracking-[0.3em] bg-pink-500/10 shadow-[0_0_20px_rgba(255,0,122,0.2)] hypnotic-text">Absolute Focus Protocol</span>
               </div>
               
               {currentDirective ? (
-                <div className="flex flex-col items-center justify-center w-full">
-                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tight text-white mb-12 leading-tight max-w-4xl mx-auto break-words">
+                <div className="flex flex-col items-center justify-center w-full relative z-20">
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tight text-white mb-12 leading-tight max-w-4xl mx-auto break-words drop-shadow-2xl">
                     {currentDirective.title}
                   </h1>
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-8 w-full">

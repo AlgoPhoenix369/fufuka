@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, Activity } from 'lucide-react';
 
-const Performance = () => {
+const Performance = ({ sessionTime }) => {
   const points = [20, 45, 30, 60, 40, 85, 50, 75, 90, 65, 80, 95];
   const max = Math.max(...points);
   const width = 300;
@@ -59,12 +59,12 @@ const Performance = () => {
 
       <div className="mt-6 grid grid-cols-2 gap-4 text-center">
         <div>
-          <div className="text-[9px] text-white/20 uppercase tracking-widest font-bold">Peak</div>
-          <div className="text-xl font-black font-mono text-white/80 tracking-tighter italic">98.2</div>
+          <div className="text-[9px] text-white/20 uppercase tracking-widest font-bold">Session (Mins)</div>
+          <div className="text-xl font-bold font-mono text-cyan-400 tracking-tighter">{Math.floor((sessionTime || 0) / 60)}</div>
         </div>
         <div>
-          <div className="text-[9px] text-white/20 uppercase tracking-widest font-bold">Delay</div>
-          <div className="text-xl font-black font-mono text-white/80 tracking-tighter italic">0.4</div>
+          <div className="text-[9px] text-white/20 uppercase tracking-widest font-bold">Flow State</div>
+          <div className="text-xl font-bold font-mono text-pink-400 tracking-tighter uppercase">{sessionTime > 0 ? "Active" : "Idle"}</div>
         </div>
       </div>
     </div>

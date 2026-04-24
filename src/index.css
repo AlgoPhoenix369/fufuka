@@ -13,6 +13,28 @@
   --glass-shadow: 0 0 50px rgba(188, 19, 254, 0.1);
 }
 
+@keyframes hypno-shift {
+  0% { background-color: #000000; }
+  25% { background-color: #0a0118; }
+  50% { background-color: #001018; }
+  75% { background-color: #100010; }
+  100% { background-color: #000000; }
+}
+
+@keyframes hypno-pulse {
+  0% { text-shadow: 0 0 10px rgba(0,255,255,0.2); color: rgba(255,255,255,0.3); }
+  50% { text-shadow: 0 0 40px rgba(255,0,122,0.8); color: rgba(255,255,255,0.9); }
+  100% { text-shadow: 0 0 10px rgba(0,255,255,0.2); color: rgba(255,255,255,0.3); }
+}
+
+.hypnotic-bg {
+  animation: hypno-shift 12s infinite alternate ease-in-out;
+}
+
+.hypnotic-text {
+  animation: hypno-pulse 4s infinite alternate ease-in-out;
+}
+
 * {
   margin: 0;
   padding: 0;
