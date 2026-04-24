@@ -1,15 +1,16 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg-deep: #050505;
-  --bg-card: rgba(18, 18, 18, 0.7);
-  --accent-blue: #0070f3;
-  --accent-gold: #c6a052;
+  --bg-deep: #05010a;
+  --bg-card: rgba(15, 1, 30, 0.65);
+  --accent-pink: #ff007a;
+  --accent-cyan: #00f0ff;
+  --accent-violet: #bc13fe;
   --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
+  --text-secondary: #a0a0ff;
   --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --glass-shadow: 0 0 50px rgba(188, 19, 254, 0.1);
 }
 
 * {
@@ -21,90 +22,100 @@
 body {
   background-color: var(--bg-deep);
   color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4 {
-  font-family: 'Outfit', sans-serif;
+/* Ensure all text fits and wraps correctly */
+p, h1, h2, h3, span, div {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+.font-beast {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
 }
 
 .glass {
   background: var(--bg-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
   border: 1px solid var(--glass-border);
-  border-radius: 16px;
+  border-radius: 32px;
   box-shadow: var(--glass-shadow);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.glass-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.05),
+    transparent
+  );
+  transition: 0.5s;
 }
 
-.glass-hover:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+.glass:hover::before {
+  left: 100%;
 }
 
-.glow-blue {
-  box-shadow: 0 0 20px rgba(0, 112, 243, 0.2);
+.glass:hover {
+  border-color: rgba(0, 240, 255, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 0 80px rgba(188, 19, 254, 0.15);
 }
 
-.glow-gold {
-  box-shadow: 0 0 20px rgba(198, 160, 82, 0.2);
+/* Awesome Text Effects */
+.glow-text {
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.neon-text-pink {
+  text-shadow: 0 0 15px rgba(255, 0, 122, 0.5);
+}
+
+.neon-text-cyan {
+  text-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+  background: linear-gradient(var(--accent-pink), var(--accent-cyan));
+  border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+/* Mobile-friendly container adjustments */
+@media (max-width: 768px) {
+  .glass {
+    border-radius: 24px;
+  }
 }
 
-/* Animations */
-@keyframes pulse-subtle {
-  0% { opacity: 0.8; }
-  50% { opacity: 1; }
-  100% { opacity: 0.8; }
-}
-
-.animate-pulse-subtle {
-  animation: pulse-subtle 4s infinite ease-in-out;
-}
-
-@keyframes flash {
-  0% { opacity: 0; transform: scale(0.95); }
-  5% { opacity: 1; transform: scale(1); }
-  10% { opacity: 0; transform: scale(1.05); }
-  100% { opacity: 0; }
-}
-
-.subliminal-flash {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 4rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.5em;
-  color: rgba(255, 255, 255, 0.03);
-  pointer-events: none;
-  z-index: 9999;
-  animation: flash 2s infinite;
+/* Text Truncation Helper */
+.text-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
