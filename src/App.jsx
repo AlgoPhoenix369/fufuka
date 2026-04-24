@@ -45,7 +45,15 @@ function App() {
   useEffect(() => {
     const timer = setInterval(() => {
       const options = { timeZone: 'Africa/Nairobi', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-      setNairobiTime(new Intl.DateTimeFormat([], options).format(new Date()));
+      const currentTime = new Intl.DateTimeFormat([], options).format(new Date());
+      setNairobiTime(currentTime);
+
+      // Automated Protocols based on Nairobi time
+      if (currentTime === "02:00:00") {
+        setLastAction("AUTOMATED SLEEP PROTOCOL INITIATED. REPLENISHMENT PHASE ACTIVE.");
+      } else if (currentTime === "05:00:00") {
+        setLastAction("AUTOMATED WAKE PROTOCOL INITIATED. 20H CYCLE COMMENCING.");
+      }
     }, 1000);
     return () => clearInterval(timer);
   }, []);
