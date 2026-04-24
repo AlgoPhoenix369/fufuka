@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Command, Zap, Target, Moon, Settings } from 'lucide-react';
+import { Search, Command, Zap, Target, CheckCircle2, Settings } from 'lucide-react';
 
 const CommandPalette = ({ onAction }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,10 +22,10 @@ const CommandPalette = ({ onAction }) => {
   }, []);
 
   const actions = [
-    { id: 'milestone', label: 'Add Milestone', icon: Target, shortcut: 'M' },
-    { id: 'focus', label: 'Start Focus Mode', icon: Zap, shortcut: 'F' },
-    { id: 'rest', label: 'System Rest', icon: Moon, shortcut: 'R' },
-    { id: 'settings', label: 'System Configuration', icon: Settings, shortcut: ',' },
+    { id: 'task', label: 'Add Task', icon: CheckCircle2, shortcut: 'T' },
+    { id: 'milestone', label: 'Add Goal', icon: Target, shortcut: 'G' },
+    { id: 'focus', label: 'Enter Focus', icon: Zap, shortcut: 'F' },
+    { id: 'settings', label: 'Settings', icon: Settings, shortcut: ',' },
   ];
 
   return (
@@ -41,17 +41,17 @@ const CommandPalette = ({ onAction }) => {
           />
           
           <motion.div 
-            initial={{ opacity: 0, scale: 0.95, y: -20 }}
+            initial={{ opacity: 0, scale: 0.98, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -20 }}
+            exit={{ opacity: 0, scale: 0.98, y: -10 }}
             className="w-full max-w-xl glass overflow-hidden shadow-2xl border-white/20"
           >
-            <div className="p-4 flex items-center gap-3 border-b border-white/10">
+            <div className="p-4 flex items-center gap-3 border-b border-white/10 bg-white/2">
               <Search className="w-5 h-5 text-white/40" />
               <input 
                 autoFocus
                 type="text" 
-                placeholder="Execute command..."
+                placeholder="Search commands..."
                 className="flex-1 bg-transparent border-none outline-none text-lg text-white placeholder:text-white/20"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -63,9 +63,6 @@ const CommandPalette = ({ onAction }) => {
             </div>
 
             <div className="p-2">
-              <div className="px-3 py-2 text-[10px] uppercase tracking-widest text-white/30 font-bold">
-                Quick Actions
-              </div>
               {actions.map((action) => (
                 <div 
                   key={action.id}
@@ -76,10 +73,10 @@ const CommandPalette = ({ onAction }) => {
                   className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 cursor-pointer group transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded bg-white/5 text-white/60 group-hover:text-blue-400 group-hover:bg-blue-500/10 transition-colors">
+                    <div className="p-2 rounded-lg bg-white/5 text-white/40 group-hover:text-blue-400 group-hover:bg-blue-500/10 transition-colors">
                       <action.icon className="w-4 h-4" />
                     </div>
-                    <span className="text-sm font-medium text-white/80 group-hover:text-white">
+                    <span className="text-sm font-medium text-white/70 group-hover:text-white">
                       {action.label}
                     </span>
                   </div>
@@ -90,11 +87,11 @@ const CommandPalette = ({ onAction }) => {
               ))}
             </div>
 
-            <div className="p-4 bg-white/2 border-t border-white/5 flex items-center justify-between text-[10px] text-white/20 uppercase tracking-tighter">
-              <span>NeuroPulse Terminal v1.0.4</span>
+            <div className="p-4 bg-white/2 border-t border-white/5 flex items-center justify-between text-[9px] text-white/20 uppercase tracking-widest font-bold">
+              <span>Pulse Terminal v1.0.4</span>
               <div className="flex gap-4">
-                <span>↑↓ to navigate</span>
-                <span>↵ to execute</span>
+                <span>↑↓ navigate</span>
+                <span>↵ execute</span>
               </div>
             </div>
           </motion.div>
