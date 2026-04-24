@@ -254,6 +254,44 @@ function App() {
           </div>
         )}
       </AnimatePresence>
+
+      <AnimatePresence>
+        {isFocusMode && (
+          <div className="fixed inset-0 z-[300] flex items-center justify-center p-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-[#05010a] backdrop-blur-3xl" />
+            <motion.div initial={{ scale: 0.9, opacity: 0, y: 50 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 50 }} className="relative z-10 w-full max-w-5xl flex flex-col items-center text-center">
+              <div className="mb-12">
+                 <span className="px-6 py-2 rounded-full border border-pink-500/30 text-pink-400 text-[10px] font-bold uppercase tracking-[0.3em] bg-pink-500/10 shadow-[0_0_20px_rgba(255,0,122,0.2)]">Absolute Focus Protocol</span>
+              </div>
+              
+              {currentDirective ? (
+                <>
+                  <h1 className="text-6xl md:text-8xl font-bold uppercase tracking-tight text-white mb-16 leading-tight">
+                    {currentDirective.title}
+                  </h1>
+                  <div className="flex items-center gap-8">
+                     <button onClick={() => { setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.map(t => t.id === currentDirective.id ? { ...t, status: 'fully' } : t) }); setIsFocusMode(false); }} className="px-12 py-6 rounded-2xl bg-green-500 text-white font-bold uppercase text-lg tracking-widest hover:scale-105 hover:bg-green-400 transition-all shadow-[0_0_40px_rgba(34,197,94,0.4)]">
+                       Execute & Clear
+                     </button>
+                     <button onClick={() => setIsFocusMode(false)} className="px-8 py-6 rounded-2xl bg-white/5 text-white/40 font-bold uppercase text-sm tracking-widest hover:bg-white/10 hover:text-white transition-all">
+                       Disengage
+                     </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h1 className="text-6xl md:text-8xl font-bold uppercase tracking-tight text-white/20 mb-16 leading-tight italic">
+                    QUEUE EMPTY.
+                  </h1>
+                  <button onClick={() => setIsFocusMode(false)} className="px-8 py-6 rounded-2xl bg-white/5 text-white/40 font-bold uppercase text-sm tracking-widest hover:bg-white/10 hover:text-white transition-all">
+                    Disengage
+                  </button>
+                </>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
