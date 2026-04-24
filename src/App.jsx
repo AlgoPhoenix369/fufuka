@@ -168,8 +168,8 @@ function App() {
                 <UploadCloud className="w-5 h-5" /> BULK IMPORT
              </button>
              <div className="grid grid-cols-2 gap-3">
-                <button onClick={() => setLastAction("Wake Protocol.")} className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-white/5 border border-white/10 text-orange-400 font-semibold text-xs uppercase hover:bg-orange-500 hover:text-white transition-all"><Sun className="w-5 h-5" /> WAKE</button>
-                <button onClick={() => setLastAction("Sleep Protocol.")} className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-white/5 border border-white/10 text-violet-400 font-semibold text-xs uppercase hover:bg-violet-500 hover:text-white transition-all"><Moon className="w-5 h-5" /> SLEEP</button>
+                <button onClick={() => addLog("MANUAL OVERRIDE: WAKE PROTOCOL INITIATED.")} className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-white/5 border border-white/10 text-orange-400 font-semibold text-xs uppercase hover:bg-orange-500 hover:text-white transition-all"><Sun className="w-5 h-5" /> WAKE</button>
+                <button onClick={() => addLog("MANUAL OVERRIDE: SLEEP PROTOCOL INITIATED.")} className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-white/5 border border-white/10 text-violet-400 font-semibold text-xs uppercase hover:bg-violet-500 hover:text-white transition-all"><Moon className="w-5 h-5" /> SLEEP</button>
              </div>
           </div>
 
