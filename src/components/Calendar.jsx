@@ -8,7 +8,8 @@ function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-const Calendar = ({ selectedDate, onSelectDate }) => {
+const Calendar = ({ dateKey, setDateKey }) => {
+  const [year, month, day] = dateKey.split('-').map(Number);
   const daysInMonth = 31; // Simple mock for now
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
   
@@ -27,14 +28,14 @@ const Calendar = ({ selectedDate, onSelectDate }) => {
           <div key={d} className="text-[10px] font-black text-white/10 text-center mb-2">{d}</div>
         ))}
         {days.map(d => {
-          const isSelected = d === selectedDate.getDate();
+          const isSelected = d === day;
           return (
             <button
               key={d}
               onClick={() => {
-                const newDate = new Date(selectedDate);
-                newDate.setDate(d);
-                onSelectDate(newDate);
+                const newDayStr = String(d).padStart(2, '0');
+                const newMonthStr = String(month).padStart(2, '0');
+                setDateKey(`${year}-${newMonthStr}-${newDayStr}`);
               }}
               className={cn(
                 "h-8 rounded-lg text-xs font-bold transition-all",

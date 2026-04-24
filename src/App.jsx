@@ -17,7 +17,9 @@ function App() {
   const [showConfig, setShowConfig] = useState(null);
   const [configData, setConfigData] = useState(null);
   const [importText, setImportText] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [dateKey, setDateKey] = useState(() => {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Nairobi', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  });
   
   const [milestones, setMilestones] = useState(() => {
     const saved = localStorage.getItem('neuro_milestones');
@@ -34,7 +36,6 @@ function App() {
   useEffect(() => { localStorage.setItem('neuro_milestones', JSON.stringify(milestones)); }, [milestones]);
   useEffect(() => { localStorage.setItem('neuro_tasks', JSON.stringify(tasksByDate)); }, [tasksByDate]);
 
-  const dateKey = selectedDate.toISOString().split('T')[0];
   const currentTasks = tasksByDate[dateKey] || [];
   const routine = { wake: "05:00", sleep: "02:00" };
   const totalWorkMinutes = 20 * 60;
@@ -171,7 +172,7 @@ function App() {
                <div className="flex flex-col gap-12 h-full xl:h-[850px]">
                   <ExecutiveSecretary tasks={currentTasks} remainingHours={remainingHours} />
                   <BeastQuote />
-                  <Calendar selectedDate={selectedDate} onSelectDate={setSelectedDate} />
+                  <Calendar dateKey={dateKey} setDateKey={setDateKey} />
                </div>
             </div>
             <SchedulePulse tasks={currentTasks} />
