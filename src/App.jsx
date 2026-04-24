@@ -1,15 +1,46 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SubliminalEngine from './components/SubliminalEngine';
 import MilestoneTracker from './components/MilestoneTracker';
 import SchedulePulse from './components/SchedulePulse';
 import CommandPalette from './components/CommandPalette';
-import { Activity, Shield, Zap, Globe } from 'lucide-react';
+import { Activity, Shield, Zap, Globe, X } from 'lucide-react';
 
 function App() {
+  const [isDeepFlow, setIsDeepFlow] = useState(false);
+  const [milestones, setMilestones] = useState([
+    { id: 1, title: "Launch MVP", progress: 65, status: "in-progress" },
+    { id: 2, title: "Secure Alpha Users", progress: 30, status: "in-progress" },
+    { id: 3, title: "Finalize Design System", progress: 100, status: "completed" }
+  ]);
+
+  const addMilestone = (title) => {
+    setMilestones([...milestones, {
+      id: Date.now(),
+      title,
+      progress: 0,
+      status: "in-progress"
+    }]);
+  };
+
   return (
     <div className="min-h-screen bg-[#050505] text-white selection:bg-blue-500/30">
       <SubliminalEngine />
-      <CommandPalette />
+      <CommandPalette onAction={(action) => {
+        if (action === 'milestone') addMilestone("New Strategic Goal");
+        if (action === 'focus') setIsDeepFlow(true);
+      }} />
+
+      {isDeepFlow && (
+        <div className="fixed inset-0 z-[60] bg-black/90 flex flex-col items-center justify-center animate-pulse">
+           <h1 className="text-6xl font-black tracking-[1em] text-blue-500 mb-8">DEEP FLOW</h1>
+           <button 
+             onClick={() => setIsDeepFlow(false)}
+             className="text-white/20 hover:text-white transition-colors flex items-center gap-2"
+           >
+             <X className="w-4 h-4" /> EXIT FOCUS
+           </button>
+        </div>
+      )}
 
       {/* Navigation / Header */}
       <nav className="fixed top-0 w-full z-50 px-6 py-4 flex items-center justify-between border-b border-white/5 backdrop-blur-md bg-black/20">
@@ -70,7 +101,10 @@ function App() {
                    Your neural patterns are optimized for peak execution. 
                    Continue with the current trajectory to meet Q2 milestones 12 days ahead of schedule.
                  </p>
-                 <button className="mt-8 px-8 py-3 rounded-full bg-white text-black font-bold text-sm hover:bg-blue-400 hover:text-white transition-all shadow-xl">
+                 <button 
+                   onClick={() => setIsDeepFlow(true)}
+                   className="mt-8 px-8 py-3 rounded-full bg-white text-black font-bold text-sm hover:bg-blue-400 hover:text-white transition-all shadow-xl"
+                 >
                    Enter Deep Flow
                  </button>
                </div>
@@ -79,7 +113,7 @@ function App() {
 
           {/* Right Column: Milestones & Secondary Info */}
           <div className="col-span-12 lg:col-span-4 space-y-8">
-            <MilestoneTracker />
+            <MilestoneTracker milestones={milestones} onAdd={() => addMilestone("New Strategic Goal")} />
             
             <div className="glass p-6">
               <h3 className="text-sm font-bold uppercase tracking-widest text-white/40 mb-6">Subconscious Feed</h3>

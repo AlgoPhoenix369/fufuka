@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Command, Zap, Target, Moon, Settings } from 'lucide-react';
 
-const CommandPalette = () => {
+const CommandPalette = ({ onAction }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -69,6 +69,10 @@ const CommandPalette = () => {
               {actions.map((action) => (
                 <div 
                   key={action.id}
+                  onClick={() => {
+                    onAction(action.id);
+                    setIsOpen(false);
+                  }}
                   className="flex items-center justify-between p-3 rounded-lg hover:bg-white/5 cursor-pointer group transition-colors"
                 >
                   <div className="flex items-center gap-3">

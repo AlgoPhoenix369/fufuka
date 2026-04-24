@@ -8,12 +8,7 @@ function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-const MilestoneTracker = () => {
-  const [milestones, setMilestones] = useState([
-    { id: 1, title: "Launch MVP", progress: 65, status: "in-progress" },
-    { id: 2, title: "Secure Alpha Users", progress: 30, status: "in-progress" },
-    { id: 3, title: "Finalize Design System", progress: 100, status: "completed" }
-  ]);
+const MilestoneTracker = ({ milestones, onAdd }) => {
 
   return (
     <div className="glass p-6 w-full max-w-md">
@@ -22,7 +17,10 @@ const MilestoneTracker = () => {
           <Target className="text-blue-500 w-5 h-5" />
           <h2 className="text-xl font-bold tracking-tight">Active Milestones</h2>
         </div>
-        <button className="p-2 rounded-full hover:bg-white/5 transition-colors">
+        <button 
+          onClick={onAdd}
+          className="p-2 rounded-full hover:bg-white/5 transition-colors"
+        >
           <Plus className="w-5 h-5" />
         </button>
       </div>
