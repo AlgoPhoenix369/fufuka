@@ -19,7 +19,7 @@ const ExecutiveSecretary = ({ tasks, remainingHours }) => {
   }
 
   return (
-    <div className="glass p-8 bg-gradient-to-br from-cyan-600/10 to-transparent border-cyan-500/20">
+    <div className="glass p-8 bg-gradient-to-br from-cyan-600/10 to-transparent border-cyan-500/20 flex-1 flex flex-col h-full">
       <div className="flex items-center gap-3 mb-6">
         <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400">
           <ShieldCheck className="w-6 h-6 animate-pulse" />
@@ -49,7 +49,7 @@ const ExecutiveSecretary = ({ tasks, remainingHours }) => {
         </div>
       </div>
 
-      <div className="mt-6 flex items-center gap-3 text-[10px] font-black text-cyan-400/40 uppercase tracking-widest">
+      <div className="mt-auto pt-6 flex items-center gap-3 text-[10px] font-black text-cyan-400/40 uppercase tracking-widest shrink-0">
          <Info className="w-3.5 h-3.5" />
          <span>Next sync in 42 minutes</span>
       </div>

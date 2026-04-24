@@ -68,7 +68,7 @@ const BeastQuote = () => {
   }, []);
 
   return (
-    <div className="glass p-8 bg-gradient-to-br from-pink-500/10 via-purple-500/10 to-cyan-500/10 border-white/20">
+    <div className="glass p-8 bg-gradient-to-br from-pink-500/10 via-purple-500/10 to-cyan-500/10 border-white/20 flex-1 flex flex-col h-full">
       <div className="flex items-center gap-3 mb-6">
         <Quote className="w-6 h-6 text-pink-400" />
         <h3 className="text-sm font-black uppercase tracking-[0.3em] text-white/60 italic">Beast Mode Protocol</h3>
@@ -84,7 +84,7 @@ const BeastQuote = () => {
           "{quote}"
         </motion.div>
       </AnimatePresence>
-      <div className="mt-8 flex gap-1">
+      <div className="mt-auto pt-8 flex gap-1 shrink-0">
         {[...Array(5)].map((_, i) => (
           <div key={i} className="h-1 flex-1 bg-white/5 rounded-full overflow-hidden">
             <motion.div 

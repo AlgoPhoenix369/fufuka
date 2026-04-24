@@ -10,8 +10,8 @@ function cn(...inputs) {
 
 const MilestoneTracker = ({ milestones, onAdd }) => {
   return (
-    <div className="glass p-6 w-full max-w-md">
-      <div className="flex items-center justify-between mb-6">
+    <div className="glass p-6 w-full max-w-md flex-1 flex flex-col h-full">
+      <div className="flex items-center justify-between mb-6 shrink-0">
         <div className="flex items-center gap-2">
           <Target className="text-blue-500 w-5 h-5" />
           <h2 className="text-xl font-bold tracking-tight">Goals</h2>
@@ -24,7 +24,7 @@ const MilestoneTracker = ({ milestones, onAdd }) => {
         </button>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-6 overflow-y-auto flex-1">
         {milestones.map((ms) => (
           <motion.div 
             key={ms.id}
@@ -64,7 +64,7 @@ const MilestoneTracker = ({ milestones, onAdd }) => {
         ))}
       </div>
 
-      <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
+      <div className="mt-auto pt-6 border-t border-white/5 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-2 text-white/30 text-[10px] font-bold uppercase tracking-widest">
           <TrendingUp className="w-3.5 h-3.5" />
           <span>92% Efficiency</span>

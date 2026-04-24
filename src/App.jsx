@@ -73,7 +73,7 @@ function App() {
       <CommandPalette onAction={(action) => { if (action === 'task') setShowImport(true); if (action === 'focus') setIsFocusMode(true); }} />
 
       {/* Side Dashboard - Fixed Right */}
-      <aside className="fixed right-0 top-0 h-screen w-80 z-[100] border-l border-white/5 backdrop-blur-4xl bg-black/40 flex flex-col p-8 overflow-y-auto">
+      <aside className="fixed right-0 top-0 h-screen w-80 z-[100] border-l border-white/5 backdrop-blur-4xl bg-[#05010a] flex flex-col p-8 overflow-y-auto">
         <div className="flex flex-col gap-10">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-600 to-cyan-400 flex items-center justify-center shadow-[0_0_40px_rgba(255,0,122,0.4)]">
@@ -160,7 +160,7 @@ function App() {
                     onConfig={(id) => { const t = currentTasks.find(x => x.id === id); setConfigData({...t}); setShowConfig(id); }} 
                   />
                </div>
-               <div className="space-y-12">
+               <div className="flex flex-col gap-12 h-full xl:h-[850px]">
                   <ExecutiveSecretary tasks={currentTasks} remainingHours={remainingHours} />
                   <BeastQuote />
                   <Calendar selectedDate={selectedDate} onSelectDate={setSelectedDate} />
@@ -169,13 +169,13 @@ function App() {
             <SchedulePulse tasks={currentTasks} />
           </div>
 
-          <div className="col-span-12 xl:col-span-4 space-y-12">
+          <div className="col-span-12 xl:col-span-4 flex flex-col gap-12 h-full xl:h-[850px]">
              <NeuralPerformance />
              <MilestoneTracker milestones={milestones} onAdd={() => setMilestones([...milestones, {id: Date.now(), title: prompt("Goal:"), progress: 0, status: 'in-progress'}])} />
-             <div className="glass p-10 border-violet-500/20">
+             <div className="glass p-10 border-violet-500/20 flex-1 flex flex-col">
                 <h3 className="text-[12px] font-black uppercase tracking-widest text-white/40 italic mb-6">Intelligence Stream</h3>
-                <div className="text-sm font-mono text-violet-400/70 break-words leading-relaxed">{`> ${lastAction}`}</div>
-                <div className="mt-4 text-[9px] text-white/10 uppercase tracking-widest">PERSISTENCE: SECURED</div>
+                <div className="text-sm font-mono text-violet-400/70 break-words leading-relaxed flex-1 overflow-y-auto">{`> ${lastAction}`}</div>
+                <div className="mt-auto pt-4 border-t border-white/5 text-[9px] text-white/10 uppercase tracking-widest">PERSISTENCE: SECURED</div>
              </div>
           </div>
         </div>

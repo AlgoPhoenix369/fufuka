@@ -13,8 +13,8 @@ const Calendar = ({ selectedDate, onSelectDate }) => {
   const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
   
   return (
-    <div className="glass p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="glass p-6 flex-1 flex flex-col h-full">
+      <div className="flex items-center justify-between mb-6 shrink-0">
         <h3 className="text-sm font-black uppercase tracking-[0.2em] text-white/40">Strategic Calendar</h3>
         <div className="flex gap-2">
           <button className="p-1 hover:bg-white/5 rounded"><ChevronLeft className="w-4 h-4" /></button>
@@ -22,7 +22,7 @@ const Calendar = ({ selectedDate, onSelectDate }) => {
         </div>
       </div>
       
-      <div className="grid grid-cols-7 gap-2">
+      <div className="grid grid-cols-7 gap-2 flex-1 mt-auto items-center">
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => (
           <div key={d} className="text-[10px] font-black text-white/10 text-center mb-2">{d}</div>
         ))}
