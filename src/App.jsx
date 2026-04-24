@@ -109,43 +109,43 @@ function App() {
               <Zap className="w-6 h-6 text-white animate-pulse" />
             </div>
             <div>
-              <span className="text-3xl font-black tracking-tighter uppercase italic block font-beast text-transparent bg-clip-text bg-gradient-to-r from-white via-pink-400 to-cyan-400">PULSE</span>
-              <span className="text-[9px] text-cyan-400 tracking-[0.4em] font-black uppercase italic">SIDE_DASHBOARD</span>
+              <span className="text-3xl font-bold tracking-tight uppercase block font-beast text-transparent bg-clip-text bg-gradient-to-r from-white via-pink-400 to-cyan-400">PULSE</span>
+              <span className="text-[10px] text-cyan-400 tracking-widest font-semibold uppercase mt-1 block">SIDE_DASHBOARD</span>
             </div>
           </div>
 
           <div className="space-y-6">
-             <div className="text-[10px] font-black text-white/20 uppercase tracking-widest border-b border-white/5 pb-2">Primary Directives</div>
-             <button onClick={() => setShowImport(true)} className="w-full flex items-center gap-4 p-4 rounded-2xl bg-pink-600 text-white font-black uppercase tracking-widest text-[10px] hover:bg-pink-500 shadow-2xl transition-all">
+             <div className="text-xs font-semibold text-white/30 uppercase tracking-widest border-b border-white/10 pb-3 mb-2">Primary Directives</div>
+             <button onClick={() => setShowImport(true)} className="w-full flex items-center justify-center gap-3 p-4 rounded-xl bg-pink-600 text-white font-bold uppercase tracking-wider text-xs hover:bg-pink-500 shadow-lg transition-all">
                 <UploadCloud className="w-5 h-5" /> BULK IMPORT
              </button>
              <div className="grid grid-cols-2 gap-3">
-                <button onClick={() => setLastAction("Wake Protocol.")} className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-white/5 border border-white/10 text-orange-400 font-black text-[10px] uppercase hover:bg-orange-500 hover:text-white transition-all"><Sun className="w-5 h-5" /> WAKE</button>
-                <button onClick={() => setLastAction("Sleep Protocol.")} className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-white/5 border border-white/10 text-violet-400 font-black text-[10px] uppercase hover:bg-violet-500 hover:text-white transition-all"><Moon className="w-5 h-5" /> SLEEP</button>
+                <button onClick={() => setLastAction("Wake Protocol.")} className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-white/5 border border-white/10 text-orange-400 font-semibold text-xs uppercase hover:bg-orange-500 hover:text-white transition-all"><Sun className="w-5 h-5" /> WAKE</button>
+                <button onClick={() => setLastAction("Sleep Protocol.")} className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-white/5 border border-white/10 text-violet-400 font-semibold text-xs uppercase hover:bg-violet-500 hover:text-white transition-all"><Moon className="w-5 h-5" /> SLEEP</button>
              </div>
           </div>
 
           <div className="space-y-6">
-             <div className="text-[10px] font-black text-white/20 uppercase tracking-widest border-b border-white/5 pb-2">Temporal Sync</div>
-             <div className="p-6 rounded-3xl bg-white/5 border border-white/10">
+             <div className="text-xs font-semibold text-white/30 uppercase tracking-widest border-b border-white/10 pb-3 mb-2">Temporal Sync</div>
+             <div className="p-6 rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center text-center">
                 <div className="flex items-center gap-3 text-cyan-400 mb-2">
                    <Globe className="w-4 h-4" />
-                   <span className="text-[10px] font-black uppercase tracking-widest">Nairobi (EAT)</span>
+                   <span className="text-xs font-semibold uppercase tracking-widest">Nairobi (EAT)</span>
                 </div>
-                <div className="text-4xl font-black text-white italic glow-text">{nairobiTime}</div>
+                <div className="text-3xl font-bold text-white tracking-tight">{nairobiTime}</div>
              </div>
           </div>
 
           <div className="space-y-6 mt-auto">
-             <div className="text-[10px] font-black text-white/20 uppercase tracking-widest border-b border-white/5 pb-2">Status Metrics</div>
+             <div className="text-xs font-semibold text-white/30 uppercase tracking-widest border-b border-white/10 pb-3 mb-2">Status Metrics</div>
              <div className="grid grid-cols-1 gap-3">
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                   <div className="text-[9px] font-black text-white/20 uppercase mb-1">Time Bank</div>
-                   <div className="text-xl font-black text-cyan-400 italic">{remainingHours.toFixed(1)}H REMAINING</div>
+                <div className="p-5 rounded-xl bg-white/5 border border-white/5">
+                   <div className="text-xs font-semibold text-white/40 uppercase mb-2">Time Bank</div>
+                   <div className="text-lg font-bold text-cyan-400 tracking-wide">{remainingHours.toFixed(1)}H REMAINING</div>
                 </div>
-                <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
-                   <div className="text-[9px] font-black text-white/20 uppercase mb-1">Date Tether</div>
-                   <div className="text-xl font-black text-pink-400 italic">{dateKey}</div>
+                <div className="p-5 rounded-xl bg-white/5 border border-white/5">
+                   <div className="text-xs font-semibold text-white/40 uppercase mb-2">Date Tether</div>
+                   <div className="text-lg font-bold text-pink-400 tracking-wide">{dateKey}</div>
                 </div>
              </div>
           </div>
@@ -160,8 +160,8 @@ function App() {
              <div className="glass p-12 bg-gradient-to-r from-pink-600/20 via-transparent to-cyan-600/20 border-pink-500/40 relative overflow-hidden group shadow-2xl">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between relative z-10 gap-8">
                    <div className="flex-1 max-w-full">
-                      <div className="text-[14px] font-black uppercase tracking-[0.5em] text-pink-400 mb-4">CURRENT DIRECTIVE</div>
-                      <h2 className="text-4xl md:text-5xl lg:text-6xl font-black italic tracking-tighter uppercase break-words leading-tight">
+                      <div className="text-sm font-semibold uppercase tracking-[0.3em] text-pink-400 mb-6">CURRENT DIRECTIVE</div>
+                      <h2 className="text-5xl md:text-6xl font-bold tracking-tight uppercase break-words leading-tight">
                         {currentDirective ? currentDirective.title : "QUEUE EMPTY."}
                       </h2>
                       {!currentDirective && (
@@ -170,8 +170,8 @@ function App() {
                    </div>
                    {currentDirective && (
                      <div className="flex gap-4 shrink-0">
-                        <button onClick={() => setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.map(t => t.id === currentDirective.id ? { ...t, status: 'fully' } : t) })} className="px-10 py-5 rounded-2xl bg-green-500 text-white font-black uppercase text-sm shadow-2xl hover:scale-105 transition-all">COMPLETE</button>
-                        <button onClick={() => { setConfigData({...currentDirective}); setShowConfig(currentDirective.id); }} className="px-10 py-5 rounded-2xl bg-white/10 text-white font-black uppercase text-sm flex items-center gap-3 border border-white/10"><Settings2 className="w-5 h-5" /> CONFIG</button>
+                        <button onClick={() => setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.map(t => t.id === currentDirective.id ? { ...t, status: 'fully' } : t) })} className="px-10 py-5 rounded-xl bg-green-500 text-white font-bold uppercase text-sm shadow-xl hover:scale-105 transition-all">COMPLETE</button>
+                        <button onClick={() => { setConfigData({...currentDirective}); setShowConfig(currentDirective.id); }} className="px-10 py-5 rounded-xl bg-white/10 text-white font-bold uppercase text-sm flex items-center gap-3 border border-white/10 hover:bg-white/20"><Settings2 className="w-5 h-5" /> CONFIG</button>
                      </div>
                    )}
                 </div>
@@ -202,9 +202,9 @@ function App() {
              <NeuralPerformance />
              <MilestoneTracker milestones={milestones} onAdd={() => setMilestones([...milestones, {id: Date.now(), title: prompt("Goal:"), progress: 0, status: 'in-progress'}])} />
              <div className="glass p-10 border-violet-500/20 flex-1 flex flex-col">
-                <h3 className="text-[12px] font-black uppercase tracking-widest text-white/40 italic mb-6">Intelligence Stream</h3>
-                <div className="text-sm font-mono text-violet-400/70 break-words leading-relaxed flex-1 overflow-y-auto">{`> ${lastAction}`}</div>
-                <div className="mt-auto pt-4 border-t border-white/5 text-[9px] text-white/10 uppercase tracking-widest">PERSISTENCE: SECURED</div>
+                <h3 className="text-sm font-semibold uppercase tracking-widest text-white/50 mb-6">Intelligence Stream</h3>
+                <div className="text-sm font-mono text-violet-300 break-words leading-relaxed flex-1 overflow-y-auto">{`> ${lastAction}`}</div>
+                <div className="mt-auto pt-6 border-t border-white/5 text-xs text-white/30 uppercase tracking-widest font-semibold">PERSISTENCE: SECURED</div>
              </div>
           </div>
         </div>

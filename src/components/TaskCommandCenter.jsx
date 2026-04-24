@@ -24,8 +24,8 @@ const TaskCommandCenter = ({ tasks, onUpdateStatus, onConfig, onDelete, onUpdate
             <Layers className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-2xl font-black tracking-tighter italic uppercase glow-text">Chronos Queue</h2>
-            <p className="text-[10px] text-white/30 uppercase tracking-[0.3em] font-black">Daily Allocation</p>
+            <h2 className="text-xl font-bold tracking-widest uppercase text-white/90">Chronos Queue</h2>
+            <p className="text-[10px] text-white/40 uppercase tracking-[0.2em] font-semibold mt-1">Daily Allocation</p>
           </div>
         </div>
       </div>
@@ -44,13 +44,13 @@ const TaskCommandCenter = ({ tasks, onUpdateStatus, onConfig, onDelete, onUpdate
             <div className="flex items-start justify-between mb-4 gap-4 relative z-10">
               <div className="flex items-start gap-4 min-w-0 flex-1">
                 <span className={cn(
-                  "px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border shrink-0 mt-1",
+                  "px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider border shrink-0 mt-1",
                   priorityColors[task.priority]
                 )}>
                   {task.priority}
                 </span>
                 <span className={cn(
-                  "text-xl font-black italic tracking-tight transition-all break-words min-w-0 leading-tight",
+                  "text-lg font-semibold tracking-tight transition-all break-words min-w-0 leading-snug",
                   task.status === 'fully' ? "text-white/20 line-through" : "text-white/90 font-beast"
                 )}>
                   {task.title}
@@ -73,7 +73,7 @@ const TaskCommandCenter = ({ tasks, onUpdateStatus, onConfig, onDelete, onUpdate
             </div>
 
             <div className="flex flex-wrap items-center justify-between pt-6 border-t border-white/5 gap-4 relative z-10">
-              <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-white/20">
+              <div className="flex items-center gap-6 text-xs font-medium uppercase tracking-wider text-white/40">
                  <div className="flex items-center gap-2">
                     <Clock className="w-3 h-3 text-cyan-400" />
                     <span>{task.startTime}</span>
@@ -87,9 +87,9 @@ const TaskCommandCenter = ({ tasks, onUpdateStatus, onConfig, onDelete, onUpdate
                  </button>
               </div>
               <div className="flex gap-2">
-                 <button onClick={() => onUpdateStatus(task.id, 'fully')} className="px-4 py-2 rounded-xl bg-green-500/10 text-green-400 border border-green-500/20 text-[9px] font-black uppercase hover:bg-green-500 hover:text-white transition-all shadow-lg">Complete</button>
-                 <button onClick={() => onUpdateStatus(task.id, 'halfway')} className="px-4 py-2 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20 text-[9px] font-black uppercase hover:bg-orange-500 hover:text-white transition-all shadow-lg">Halfway</button>
-                 <button onClick={() => onUpdateStatus(task.id, 'not-done')} className="px-4 py-2 rounded-xl bg-white/5 text-white/40 border border-white/10 text-[9px] font-black uppercase hover:bg-white/10 hover:text-white transition-all flex items-center gap-2">
+                 <button onClick={() => onUpdateStatus(task.id, 'fully')} className="px-5 py-2.5 rounded-xl bg-green-500/10 text-green-400 border border-green-500/20 text-[10px] font-bold uppercase tracking-wider hover:bg-green-500 hover:text-white transition-all shadow-md">Complete</button>
+                 <button onClick={() => onUpdateStatus(task.id, 'halfway')} className="px-5 py-2.5 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20 text-[10px] font-bold uppercase tracking-wider hover:bg-orange-500 hover:text-white transition-all shadow-md">Halfway</button>
+                 <button onClick={() => onUpdateStatus(task.id, 'not-done')} className="px-5 py-2.5 rounded-xl bg-white/5 text-white/50 border border-white/10 text-[10px] font-bold uppercase tracking-wider hover:bg-white/10 hover:text-white transition-all flex items-center gap-2">
                     <RefreshCcw className="w-3 h-3" /> Reset
                  </button>
               </div>
