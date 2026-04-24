@@ -153,8 +153,9 @@ function App() {
       </aside>
 
       {/* Main Workspace - Offset for Sidebar */}
-      <main className={`flex-1 p-12 max-w-[1600px] transition-all duration-500 ease-in-out ${isSidebarOpen ? 'mr-80' : 'mr-0'}`}>
-        <div className="grid grid-cols-12 gap-12">
+      <div className={`flex-1 flex justify-center transition-all duration-500 ease-in-out ${isSidebarOpen ? 'pr-80' : 'pr-0'}`}>
+        <main className="w-full max-w-[1600px] p-8 md:p-12">
+          <div className="grid grid-cols-12 gap-8 md:gap-12">
           
           <div className="col-span-12">
              <div className="glass p-12 bg-gradient-to-r from-pink-600/20 via-transparent to-cyan-600/20 border-pink-500/40 relative overflow-hidden group shadow-2xl">
@@ -207,8 +208,9 @@ function App() {
                 <div className="mt-auto pt-6 border-t border-white/5 text-xs text-white/30 uppercase tracking-widest font-semibold">PERSISTENCE: SECURED</div>
              </div>
           </div>
-        </div>
-      </main>
+          </div>
+        </main>
+      </div>
 
       {/* Modals */}
       <AnimatePresence>
