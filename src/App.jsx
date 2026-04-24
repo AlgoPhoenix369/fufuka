@@ -38,16 +38,27 @@ function App() {
 
   const currentTasks = tasksByDate[dateKey] || [];
   const routine = { wake: "05:00", sleep: "02:00" };
-  const totalWorkMinutes = 20 * 60;
-  const allocatedMinutes = currentTasks.reduce((acc, t) => acc + (parseInt(t.duration) || 0), 0);
-  const remainingHours = (totalWorkMinutes - allocatedMinutes) / 60;
 
   const [nairobiTime, setNairobiTime] = useState("");
+  const [remainingHours, setRemainingHours] = useState(20);
+
   useEffect(() => {
     const timer = setInterval(() => {
       const options = { timeZone: 'Africa/Nairobi', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
       const currentTime = new Intl.DateTimeFormat([], options).format(new Date());
       setNairobiTime(currentTime);
+
+      const nowStr = new Date().toLocaleString("en-US", { timeZone: "Africa/Nairobi" });
+      const nowEAT = new Date(nowStr);
+      const targetEAT = new Date(nowStr);
+      targetEAT.setHours(2, 0, 0, 0);
+
+      if (nowEAT.getHours() >= 2) {
+        targetEAT.setDate(targetEAT.getDate() + 1);
+      }
+
+      const diffMs = targetEAT - nowEAT;
+      setRemainingHours(diffMs / (1000 * 60 * 60));
 
       // Automated Protocols based on Nairobi time
       if (currentTime === "02:00:00") {
