@@ -265,28 +265,28 @@ function App() {
               </div>
               
               {currentDirective ? (
-                <>
-                  <h1 className="text-6xl md:text-8xl font-bold uppercase tracking-tight text-white mb-16 leading-tight">
+                <div className="flex flex-col items-center justify-center w-full">
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tight text-white mb-12 leading-tight max-w-4xl mx-auto break-words">
                     {currentDirective.title}
                   </h1>
-                  <div className="flex items-center gap-8">
-                     <button onClick={() => { setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.map(t => t.id === currentDirective.id ? { ...t, status: 'fully' } : t) }); setIsFocusMode(false); }} className="px-12 py-6 rounded-2xl bg-green-500 text-white font-bold uppercase text-lg tracking-widest hover:scale-105 hover:bg-green-400 transition-all shadow-[0_0_40px_rgba(34,197,94,0.4)]">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-8 w-full">
+                     <button onClick={() => { setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.map(t => t.id === currentDirective.id ? { ...t, status: 'fully' } : t) }); setIsFocusMode(false); }} className="px-12 py-6 rounded-2xl bg-green-500 text-white font-bold uppercase text-lg tracking-widest hover:scale-105 hover:bg-green-400 transition-all shadow-[0_0_40px_rgba(34,197,94,0.4)] w-full sm:w-auto">
                        Execute & Clear
                      </button>
-                     <button onClick={() => setIsFocusMode(false)} className="px-8 py-6 rounded-2xl bg-white/5 text-white/40 font-bold uppercase text-sm tracking-widest hover:bg-white/10 hover:text-white transition-all">
+                     <button onClick={() => setIsFocusMode(false)} className="px-12 py-6 rounded-2xl bg-white/10 text-white font-bold uppercase text-sm tracking-widest hover:bg-white/20 transition-all border border-white/20 w-full sm:w-auto">
                        Disengage
                      </button>
                   </div>
-                </>
+                </div>
               ) : (
-                <>
-                  <h1 className="text-6xl md:text-8xl font-bold uppercase tracking-tight text-white/20 mb-16 leading-tight italic">
+                <div className="flex flex-col items-center justify-center w-full">
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tight text-white/20 mb-12 leading-tight italic">
                     QUEUE EMPTY.
                   </h1>
-                  <button onClick={() => setIsFocusMode(false)} className="px-8 py-6 rounded-2xl bg-white/5 text-white/40 font-bold uppercase text-sm tracking-widest hover:bg-white/10 hover:text-white transition-all">
+                  <button onClick={() => setIsFocusMode(false)} className="px-12 py-6 rounded-2xl bg-white/10 text-white font-bold uppercase text-sm tracking-widest hover:bg-white/20 transition-all border border-white/20">
                     Disengage
                   </button>
-                </>
+                </div>
               )}
             </motion.div>
           </div>
