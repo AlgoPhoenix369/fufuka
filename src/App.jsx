@@ -5,7 +5,7 @@ import SchedulePulse from './components/SchedulePulse';
 import CommandPalette from './components/CommandPalette';
 import TaskCommandCenter from './components/TaskCommandCenter';
 import NeuralPerformance from './components/NeuralPerformance';
-import { Activity, Shield, Zap, Globe, X, Cpu, BarChart3, Radio } from 'lucide-react';
+import { Activity, Shield, Zap, Globe, X, Cpu, BarChart3, Radio, Clock } from 'lucide-react';
 
 function App() {
   const [isFocusMode, setIsFocusMode] = useState(false);
