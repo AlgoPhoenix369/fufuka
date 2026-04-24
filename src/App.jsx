@@ -22,30 +22,10 @@ function App() {
     return new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Nairobi', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
   });
   
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [deepWorkState, setDeepWorkState] = useState('idle');
   const [sessionTime, setSessionTime] = useState(() => {
     return parseInt(localStorage.getItem('neuro_session_time') || "0");
   });
-
-  useEffect(() => {
-    let interval = null;
-    if (isTimerRunning) {
-      setLastAction(`DEEP WORK SESSION INITIATED: ${new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Nairobi', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date())}`);
-      interval = setInterval(() => {
-        setSessionTime(prev => {
-          const newTime = prev + 1;
-          localStorage.setItem('neuro_session_time', newTime.toString());
-          return newTime;
-        });
-      }, 1000);
-    } else {
-      if (sessionTime > 0) {
-         setLastAction(`DEEP WORK SESSION TERMINATED. TOTAL TIME: ${formatTime(sessionTime)}`);
-      }
-      clearInterval(interval);
-    }
-    return () => clearInterval(interval);
-  }, [isTimerRunning]);
 
   const formatTime = (totalSeconds) => {
     const h = Math.floor(totalSeconds / 3600);
@@ -64,7 +44,40 @@ function App() {
     return saved ? JSON.parse(saved) : {};
   });
   
-  const [lastAction, setLastAction] = useState("Side Dashboard Initialized.");
+  const [streamLogs, setStreamLogs] = useState(() => {
+    return JSON.parse(localStorage.getItem('neuro_stream') || '["Side Dashboard Initialized."]');
+  });
+
+  const addLog = (msg) => {
+    const timestamp = new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Nairobi', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date());
+    setStreamLogs(prev => {
+      const newLogs = [`[${timestamp}] ${msg}`, ...prev].slice(0, 50);
+      localStorage.setItem('neuro_stream', JSON.stringify(newLogs));
+      return newLogs;
+    });
+  };
+
+  useEffect(() => {
+    let interval = null;
+    if (deepWorkState === 'focus' || deepWorkState === 'rest') {
+      if (deepWorkState === 'focus') {
+         addLog(`DEEP WORK SESSION INITIATED: ${new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Nairobi', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date())}`);
+      } else if (deepWorkState === 'rest') {
+         addLog(`REST PROTOCOL INITIATED.`);
+      }
+      interval = setInterval(() => {
+        setSessionTime(prev => {
+          const newTime = prev + 1;
+          localStorage.setItem('neuro_session_time', newTime.toString());
+          return newTime;
+        });
+      }, 1000);
+    } else if (deepWorkState === 'idle' && sessionTime > 0) {
+      addLog(`SESSION TERMINATED. TOTAL TIME: ${formatTime(sessionTime)}`);
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [deepWorkState]);
 
   useEffect(() => { localStorage.setItem('neuro_milestones', JSON.stringify(milestones)); }, [milestones]);
   useEffect(() => { localStorage.setItem('neuro_tasks', JSON.stringify(tasksByDate)); }, [tasksByDate]);
@@ -95,9 +108,9 @@ function App() {
 
       // Automated Protocols based on Nairobi time
       if (currentTime === "02:00:00") {
-        setLastAction("AUTOMATED SLEEP PROTOCOL INITIATED. REPLENISHMENT PHASE ACTIVE.");
+        addLog("AUTOMATED SLEEP PROTOCOL INITIATED. REPLENISHMENT PHASE ACTIVE.");
       } else if (currentTime === "05:00:00") {
-        setLastAction("AUTOMATED WAKE PROTOCOL INITIATED. 20H CYCLE COMMENCING.");
+        addLog("AUTOMATED WAKE PROTOCOL INITIATED. 20H CYCLE COMMENCING.");
       }
     }, 1000);
     return () => clearInterval(timer);
@@ -230,18 +243,25 @@ function App() {
                       <div className="text-5xl font-mono font-bold tracking-tighter text-white mb-6">
                         {formatTime(sessionTime)}
                       </div>
-                      <div className="flex items-center gap-4 w-full">
+                      <div className="flex items-center gap-3 w-full">
                          <button 
-                           onClick={() => setIsTimerRunning(true)} 
-                           className={`flex-1 py-4 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${isTimerRunning ? 'bg-green-500/10 text-green-500/50 border border-green-500/20' : 'bg-green-500 text-white shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:bg-green-400 hover:scale-105'}`}
-                           disabled={isTimerRunning}
+                           onClick={() => setDeepWorkState('focus')} 
+                           className={`flex-1 py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all ${deepWorkState === 'focus' ? 'bg-green-500/10 text-green-500/50 border border-green-500/20' : 'bg-green-500 text-white shadow-[0_0_20px_rgba(34,197,94,0.4)] hover:bg-green-400 hover:scale-105'}`}
+                           disabled={deepWorkState === 'focus'}
                          >
-                           Start
+                           Focus
                          </button>
                          <button 
-                           onClick={() => setIsTimerRunning(false)} 
-                           className={`flex-1 py-4 rounded-xl font-bold uppercase tracking-widest text-xs transition-all ${!isTimerRunning ? 'bg-red-500/10 text-red-500/50 border border-red-500/20' : 'bg-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.4)] hover:bg-red-400 hover:scale-105'}`}
-                           disabled={!isTimerRunning}
+                           onClick={() => setDeepWorkState('rest')} 
+                           className={`flex-1 py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all ${deepWorkState === 'rest' ? 'bg-blue-500/10 text-blue-500/50 border border-blue-500/20' : 'bg-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.4)] hover:bg-blue-400 hover:scale-105'}`}
+                           disabled={deepWorkState === 'rest'}
+                         >
+                           Rest
+                         </button>
+                         <button 
+                           onClick={() => setDeepWorkState('idle')} 
+                           className={`flex-1 py-4 rounded-xl font-bold uppercase tracking-widest text-[10px] transition-all ${deepWorkState === 'idle' ? 'bg-red-500/10 text-red-500/50 border border-red-500/20' : 'bg-red-500 text-white shadow-[0_0_20px_rgba(239,68,68,0.4)] hover:bg-red-400 hover:scale-105'}`}
+                           disabled={deepWorkState === 'idle'}
                          >
                            Stop
                          </button>
@@ -257,8 +277,12 @@ function App() {
              <NeuralPerformance sessionTime={sessionTime} />
              <MilestoneTracker milestones={milestones} onAdd={() => setMilestones([...milestones, {id: Date.now(), title: prompt("Goal:"), progress: 0, status: 'in-progress'}])} />
              <div className="glass p-10 border-violet-500/20 flex-1 flex flex-col">
-                <h3 className="text-sm font-semibold uppercase tracking-widest text-white/50 mb-6">Intelligence Stream</h3>
-                <div className="text-sm font-mono text-violet-300 break-words leading-relaxed flex-1 overflow-y-auto">{`> ${lastAction}`}</div>
+                <h3 className="text-sm font-semibold uppercase tracking-widest text-white/50 mb-6 shrink-0">Intelligence Stream</h3>
+                <div className="text-sm font-mono text-violet-300 break-words leading-relaxed flex-1 overflow-y-auto space-y-2 pr-2">
+                  {streamLogs.map((log, i) => (
+                    <div key={i} className={i === 0 ? "text-white" : "text-violet-400/50"}>{`> ${log}`}</div>
+                  ))}
+                </div>
                 <div className="mt-auto pt-6 border-t border-white/5 text-xs text-white/30 uppercase tracking-widest font-semibold">PERSISTENCE: SECURED</div>
              </div>
           </div>
@@ -358,6 +382,51 @@ function App() {
                   </button>
                 </div>
               )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Full Screen Deep Work Session Overlay */}
+      <AnimatePresence>
+        {deepWorkState !== 'idle' && (
+          <div className={`fixed inset-0 z-[400] flex flex-col items-center justify-center p-6 ${deepWorkState === 'focus' ? 'rainbow-bg' : 'bg-[#001018]'}`}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-black/40 backdrop-blur-xl" />
+            
+            {/* Hypnotic Flashing Words */}
+            <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-around opacity-40 overflow-hidden mix-blend-overlay">
+               {["FOCUS", "EXECUTE", "NO EXCUSES", "CONQUER", "OVERCOME", "1000%"].map((word, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: [0, 1, 0], scale: [0.8, 1.2, 0.8] }}
+                    transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+                    className="text-[12vw] font-black font-beast text-white tracking-tighter whitespace-nowrap"
+                  >
+                    {word}
+                  </motion.div>
+               ))}
+            </div>
+
+            <motion.div initial={{ scale: 0.9, opacity: 0, y: 50 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.9, opacity: 0, y: 50 }} className="relative z-10 w-full max-w-5xl flex flex-col items-center text-center p-12">
+               <div className="mb-8">
+                 <span className={`px-6 py-2 rounded-full border text-[12px] font-bold uppercase tracking-[0.4em] shadow-2xl ${deepWorkState === 'focus' ? 'border-white/50 text-white bg-white/10' : 'border-blue-500/50 text-blue-400 bg-blue-500/10'}`}>
+                    {deepWorkState === 'focus' ? 'Absolute Focus Active' : 'Rest Phase Active'}
+                 </span>
+               </div>
+               
+               <h1 className="text-[12rem] font-black uppercase tracking-tighter text-white mb-16 drop-shadow-2xl font-mono leading-none">
+                  {formatTime(sessionTime)}
+               </h1>
+               
+               <div className="flex gap-8 mt-12 w-full max-w-3xl">
+                  {deepWorkState === 'rest' ? (
+                     <button onClick={() => setDeepWorkState('focus')} className="flex-1 py-8 rounded-3xl bg-green-500 text-white font-black uppercase text-2xl tracking-widest hover:scale-105 transition-all shadow-[0_0_50px_rgba(34,197,94,0.5)]">Resume Focus</button>
+                  ) : (
+                     <button onClick={() => setDeepWorkState('rest')} className="flex-1 py-8 rounded-3xl bg-blue-500 text-white font-black uppercase text-2xl tracking-widest hover:scale-105 transition-all shadow-[0_0_50px_rgba(59,130,246,0.5)]">Take Rest</button>
+                  )}
+                  <button onClick={() => setDeepWorkState('idle')} className="flex-1 py-8 rounded-3xl bg-red-500 text-white font-black uppercase text-2xl tracking-widest hover:scale-105 transition-all shadow-[0_0_50px_rgba(239,68,68,0.5)]">End Session</button>
+               </div>
             </motion.div>
           </div>
         )}

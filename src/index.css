@@ -35,6 +35,19 @@
   animation: hypno-pulse 4s infinite alternate ease-in-out;
 }
 
+@keyframes rainbow-shift {
+  0% { background-color: #ff007a; }
+  20% { background-color: #bc13fe; }
+  40% { background-color: #00f0ff; }
+  60% { background-color: #00ffaa; }
+  80% { background-color: #ffea00; }
+  100% { background-color: #ff0044; }
+}
+
+.rainbow-bg {
+  animation: rainbow-shift 15s infinite alternate ease-in-out;
+}
+
 * {
   margin: 0;
   padding: 0;
