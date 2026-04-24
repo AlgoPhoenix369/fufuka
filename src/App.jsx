@@ -59,12 +59,8 @@ function App() {
 
   useEffect(() => {
     let interval = null;
-    if (deepWorkState === 'focus' || deepWorkState === 'rest') {
-      if (deepWorkState === 'focus') {
-         addLog(`DEEP WORK SESSION INITIATED: ${new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Nairobi', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date())}`);
-      } else if (deepWorkState === 'rest') {
-         addLog(`REST PROTOCOL INITIATED.`);
-      }
+    if (deepWorkState === 'focus') {
+      addLog(`DEEP WORK SESSION RESUMED/INITIATED: ${new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Nairobi', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date())}`);
       interval = setInterval(() => {
         setSessionTime(prev => {
           const newTime = prev + 1;
@@ -72,8 +68,15 @@ function App() {
           return newTime;
         });
       }, 1000);
-    } else if (deepWorkState === 'idle' && sessionTime > 0) {
-      addLog(`SESSION TERMINATED. TOTAL TIME: ${formatTime(sessionTime)}`);
+    } else if (deepWorkState === 'rest') {
+      addLog(`REST PROTOCOL INITIATED (TIMER PAUSED).`);
+      clearInterval(interval);
+    } else if (deepWorkState === 'idle') {
+      if (sessionTime > 0) {
+         addLog(`SESSION TERMINATED. TOTAL TIME SAVED: ${formatTime(sessionTime)}`);
+         setSessionTime(0);
+         localStorage.setItem('neuro_session_time', '0');
+      }
       clearInterval(interval);
     }
     return () => clearInterval(interval);
