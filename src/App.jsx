@@ -22,7 +22,9 @@ function App() {
     { id: 4, title: "Refactor API", priority: "high", category: "Dev", completed: false },
   ]);
 
-  const addMilestone = (title) => {
+  const addMilestone = () => {
+    const title = prompt("Enter Strategic Goal:");
+    if (!title) return;
     setMilestones([...milestones, {
       id: Date.now(),
       title,
@@ -31,11 +33,13 @@ function App() {
     }]);
   };
 
-  const addTask = (title) => {
+  const addTask = () => {
+    const title = prompt("Enter Task Description:");
+    if (!title) return;
     setTasks([{
       id: Date.now(),
       title,
-      priority: "medium",
+      priority: "high",
       category: "Task",
       completed: false
     }, ...tasks]);
@@ -49,9 +53,9 @@ function App() {
     <div className="min-h-screen bg-[#050505] text-white selection:bg-blue-500/30 overflow-x-hidden font-sans">
       <SubliminalEngine />
       <CommandPalette onAction={(action) => {
-        if (action === 'milestone') addMilestone("New Goal");
+        if (action === 'milestone') addMilestone();
         if (action === 'focus') setIsFocusMode(true);
-        if (action === 'task') addTask("New Task");
+        if (action === 'task') addTask();
       }} />
 
       {isFocusMode && (
