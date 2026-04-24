@@ -9,7 +9,7 @@ import NeuralPerformance from './components/NeuralPerformance';
 import Calendar from './components/Calendar';
 import BeastQuote from './components/BeastQuote';
 import ExecutiveSecretary from './components/ExecutiveSecretary';
-import { Activity, Zap, Shield, X, Cpu, BarChart3, Radio, Clock, Sun, Moon, Utensils, ChevronDown, Download, CheckCircle2, AlertCircle, Settings2, Trash2, Globe, Power, UploadCloud, LayoutDashboard, Calendar as CalendarIcon, Target } from 'lucide-react';
+import { Activity, Zap, Shield, X, Cpu, BarChart3, Radio, Clock, Sun, Moon, Utensils, ChevronDown, Download, CheckCircle2, AlertCircle, Settings2, Trash2, Globe, Power, UploadCloud, LayoutDashboard, Calendar as CalendarIcon, Target, Menu, ChevronRight } from 'lucide-react';
 
 function App() {
   const [isFocusMode, setIsFocusMode] = useState(false);
@@ -17,6 +17,7 @@ function App() {
   const [showConfig, setShowConfig] = useState(null);
   const [configData, setConfigData] = useState(null);
   const [importText, setImportText] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [dateKey, setDateKey] = useState(() => {
     return new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Nairobi', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
   });
@@ -92,8 +93,16 @@ function App() {
       <SubliminalEngine />
       <CommandPalette onAction={(action) => { if (action === 'task') setShowImport(true); if (action === 'focus') setIsFocusMode(true); }} />
 
+      {/* Sidebar Toggle Button */}
+      <button 
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        className={`fixed top-1/2 -translate-y-1/2 z-[110] p-4 bg-[#05010a] border border-white/10 border-r-0 rounded-l-2xl text-white/50 hover:text-cyan-400 hover:bg-white/5 transition-all duration-500 ease-in-out shadow-[0_0_20px_rgba(0,0,0,0.8)] ${isSidebarOpen ? 'right-80' : 'right-0'}`}
+      >
+        {isSidebarOpen ? <ChevronRight className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+      </button>
+
       {/* Side Dashboard - Fixed Right */}
-      <aside className="fixed right-0 top-0 h-screen w-80 z-[100] border-l border-white/5 backdrop-blur-4xl bg-[#05010a] flex flex-col p-8 overflow-y-auto">
+      <aside className={`fixed right-0 top-0 h-screen w-80 z-[100] border-l border-white/5 backdrop-blur-4xl bg-[#05010a] flex flex-col p-8 overflow-y-auto transition-transform duration-500 ease-in-out ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="flex flex-col gap-10">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-600 to-cyan-400 flex items-center justify-center shadow-[0_0_40px_rgba(255,0,122,0.4)]">
@@ -144,7 +153,7 @@ function App() {
       </aside>
 
       {/* Main Workspace - Offset for Sidebar */}
-      <main className="flex-1 mr-80 p-12 max-w-[1600px]">
+      <main className={`flex-1 p-12 max-w-[1600px] transition-all duration-500 ease-in-out ${isSidebarOpen ? 'mr-80' : 'mr-0'}`}>
         <div className="grid grid-cols-12 gap-12">
           
           <div className="col-span-12">
