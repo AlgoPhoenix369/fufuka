@@ -9,11 +9,13 @@ import NeuralPerformance from './components/NeuralPerformance';
 import Calendar from './components/Calendar';
 import BeastQuote from './components/BeastQuote';
 import ExecutiveSecretary from './components/ExecutiveSecretary';
-import { Activity, Zap, Shield, X, Cpu, BarChart3, Radio, Clock, Sun, Moon, Utensils, ChevronDown, Download, CheckCircle2, AlertCircle, Settings2, Trash2, Globe, Power, UploadCloud, LayoutDashboard, Calendar as CalendarIcon, Target, Menu, ChevronRight } from 'lucide-react';
+import { Activity, Zap, Shield, X, Cpu, BarChart3, Radio, Clock, Sun, Moon, Utensils, ChevronDown, Download, CheckCircle2, AlertCircle, Settings2, Trash2, Globe, Power, UploadCloud, LayoutDashboard, Calendar as CalendarIcon, Target, Menu, ChevronRight, Plus } from 'lucide-react';
 
 function App() {
   const [isFocusMode, setIsFocusMode] = useState(false);
   const [showImport, setShowImport] = useState(false);
+  const [showAddTask, setShowAddTask] = useState(false);
+  const [newTaskData, setNewTaskData] = useState({ title: '', startTime: '06:00', duration: 60, priority: 'high', goalId: null });
   const [showConfig, setShowConfig] = useState(null);
   const [configData, setConfigData] = useState(null);
   const [importText, setImportText] = useState("");
@@ -166,6 +168,15 @@ function App() {
     return () => clearInterval(timer);
   }, []);
 
+  const addSingleTask = () => {
+    if (!newTaskData.title.trim()) return;
+    const task = { id: Date.now(), ...newTaskData, title: newTaskData.title.trim(), status: 'not-done', category: 'FORMAL' };
+    setTasksByDate({ ...tasksByDate, [dateKey]: [...currentTasks, task].sort((a, b) => a.startTime.localeCompare(b.startTime)) });
+    addLog(`TASK ADDED: "${task.title}"${task.goalId ? ' → ' + (milestones.find(m => m.id === task.goalId)?.title || '') : ''}`);
+    setShowAddTask(false);
+    setNewTaskData({ title: '', startTime: '06:00', duration: 60, priority: 'high', goalId: null });
+  };
+
   const bulkImport = () => {
     const lines = importText.split('\n').filter(l => l.trim() !== "");
     const newTasks = lines.map((line, i) => ({
@@ -213,6 +224,9 @@ function App() {
              <div className="text-xs font-semibold text-white/30 uppercase tracking-widest border-b border-white/10 pb-3 mb-2">Primary Directives</div>
              <button onClick={() => setShowImport(true)} className="w-full flex items-center justify-center gap-3 p-4 rounded-xl bg-pink-600 text-white font-bold uppercase tracking-wider text-xs hover:bg-pink-500 shadow-lg transition-all">
                 <UploadCloud className="w-5 h-5" /> BULK IMPORT
+             </button>
+             <button onClick={() => setShowAddTask(true)} className="w-full flex items-center justify-center gap-3 p-4 rounded-xl bg-cyan-600 text-white font-bold uppercase tracking-wider text-xs hover:bg-cyan-500 shadow-lg transition-all">
+                <Plus className="w-5 h-5" /> ADD TASK
              </button>
              <div className="grid grid-cols-2 gap-3">
                 <button
@@ -396,6 +410,58 @@ function App() {
               <div className="flex gap-6">
                 <button onClick={bulkImport} className="flex-1 py-5 rounded-2xl bg-pink-600 text-white font-black uppercase tracking-widest text-sm hover:bg-pink-500 shadow-2xl transition-all">INITIALIZE</button>
                 <button onClick={() => setShowImport(false)} className="px-10 py-5 rounded-2xl bg-white/5 text-white/40 font-black uppercase tracking-widest text-xs hover:bg-white/10">ABORT</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showAddTask && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowAddTask(false)} className="absolute inset-0 bg-black/95 backdrop-blur-3xl" />
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="glass w-full max-w-lg p-12 relative z-10 border-cyan-500/50 shadow-2xl">
+              <h2 className="text-4xl font-black mb-10 italic uppercase tracking-tighter text-cyan-400">ADD TASK</h2>
+              <div className="space-y-6">
+                <input
+                  type="text"
+                  autoFocus
+                  placeholder="Task title..."
+                  value={newTaskData.title}
+                  onChange={(e) => setNewTaskData({ ...newTaskData, title: e.target.value })}
+                  onKeyDown={(e) => e.key === 'Enter' && addSingleTask()}
+                  className="w-full bg-black/40 rounded-2xl p-5 border border-white/10 outline-none focus:border-cyan-500/50 text-white font-semibold text-lg placeholder-white/20"
+                />
+                <div>
+                  <p className="text-xs text-white/40 uppercase tracking-widest font-semibold mb-3">Priority</p>
+                  <div className="grid grid-cols-4 gap-3">
+                    {['critical', 'high', 'medium', 'low'].map(p => (
+                      <button key={p} onClick={() => setNewTaskData({ ...newTaskData, priority: p })} className={`py-3 rounded-2xl text-[10px] font-black uppercase border transition-all ${newTaskData.priority === p ? 'bg-pink-600 border-pink-500 text-white shadow-xl' : 'bg-white/5 border-white/10 text-white/40'}`}>{p}</button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs text-white/40 uppercase tracking-widest font-semibold mb-3">Start Time</p>
+                  <input type="time" value={newTaskData.startTime} onChange={(e) => setNewTaskData({ ...newTaskData, startTime: e.target.value })} className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-lg font-black text-white outline-none focus:border-cyan-500" />
+                </div>
+                <div>
+                  <p className="text-xs text-white/40 uppercase tracking-widest font-semibold mb-3">Assign Goal (optional)</p>
+                  <select
+                    value={newTaskData.goalId || ''}
+                    onChange={(e) => setNewTaskData({ ...newTaskData, goalId: e.target.value ? parseInt(e.target.value) : null })}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-cyan-500 appearance-none"
+                  >
+                    <option value="">— Unassigned —</option>
+                    {milestones.map(m => <option key={m.id} value={m.id}>{m.title}</option>)}
+                  </select>
+                  {milestones.length === 0 && (
+                    <p className="mt-2 text-[11px] text-white/25 italic">No goals yet — add goals in the Goal Tracker first.</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex gap-6 mt-10">
+                <button onClick={addSingleTask} disabled={!newTaskData.title.trim()} className="flex-1 py-5 rounded-2xl bg-cyan-600 text-white font-black uppercase tracking-widest text-xs hover:bg-cyan-500 shadow-2xl transition-all disabled:opacity-30 disabled:cursor-not-allowed">ADD TASK</button>
+                <button onClick={() => setShowAddTask(false)} className="px-10 py-5 rounded-2xl bg-white/5 text-white/40 font-black uppercase tracking-widest text-xs hover:bg-white/10">ABORT</button>
               </div>
             </motion.div>
           </div>
