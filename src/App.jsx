@@ -230,13 +230,20 @@ function App() {
           <div className="col-span-12 xl:col-span-8 space-y-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                <div className="h-[850px]">
-                  <TaskCommandCenter 
-                    tasks={currentTasks} 
-                    onUpdateStatus={(id, s) => setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.map(t => t.id === id ? { ...t, status: s } : t) })} 
-                    onDelete={(id) => setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.filter(t => t.id !== id) })}
-                    onUpdateNode={(id, category) => setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.map(t => t.id === id ? { ...t, category } : t) })}
-                    onConfig={(id) => { const t = currentTasks.find(x => x.id === id); setConfigData({...t}); setShowConfig(id); }} 
-                  />
+                   <TaskCommandCenter 
+                     tasks={currentTasks}
+                     milestones={milestones}
+                     onUpdateStatus={(id, s) => { setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.map(t => t.id === id ? { ...t, status: s } : t) }); addLog(`TASK STATUS: "${currentTasks.find(t=>t.id===id)?.title}" → ${s.toUpperCase()}`); }} 
+                     onDelete={(id) => { addLog(`TASK DELETED: "${currentTasks.find(t=>t.id===id)?.title}"`); setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.filter(t => t.id !== id) }); }}
+                     onUpdateNode={(id, category) => setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.map(t => t.id === id ? { ...t, category } : t) })}
+                     onConfig={(id) => { const t = currentTasks.find(x => x.id === id); setConfigData({...t}); setShowConfig(id); }}
+                     onAssignGoal={(id, goalId) => {
+                       const task = currentTasks.find(t => t.id === id);
+                       const goal = milestones.find(m => m.id === goalId);
+                       setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.map(t => t.id === id ? { ...t, goalId } : t) });
+                       addLog(`TASK LINKED: "${task?.title}" → ${goal ? '"' + goal.title + '"' : 'Unassigned'}`);
+                     }}
+                   />
                </div>
                <div className="flex flex-col gap-12 h-full xl:h-[850px]">
                    <ExecutiveSecretary tasks={currentTasks} remainingHours={remainingHours} />
@@ -278,7 +285,25 @@ function App() {
 
           <div className="col-span-12 xl:col-span-4 flex flex-col gap-12 h-full xl:h-[850px]">
              <NeuralPerformance sessionTime={sessionTime} />
-             <MilestoneTracker milestones={milestones} onAdd={() => setMilestones([...milestones, {id: Date.now(), title: prompt("Goal:"), progress: 0, status: 'in-progress'}])} />
+             <MilestoneTracker
+               milestones={milestones}
+               tasks={currentTasks}
+               onAdd={(title) => {
+                 const newGoal = { id: Date.now(), title, status: 'in-progress' };
+                 setMilestones(prev => [...prev, newGoal]);
+                 addLog(`GOAL ADDED: "${title}"`);
+               }}
+               onDelete={(id) => {
+                 const goal = milestones.find(m => m.id === id);
+                 setMilestones(prev => prev.filter(m => m.id !== id));
+                 setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.map(t => t.goalId === id ? { ...t, goalId: null } : t) });
+                 addLog(`GOAL DELETED: "${goal?.title}"`);
+               }}
+               onEdit={(id, newTitle) => {
+                 setMilestones(prev => prev.map(m => m.id === id ? { ...m, title: newTitle } : m));
+                 addLog(`GOAL RENAMED: "${newTitle}"`);
+               }}
+             />
              <div className="glass p-10 border-violet-500/20 flex-1 flex flex-col">
                 <h3 className="text-sm font-semibold uppercase tracking-widest text-white/50 mb-6 shrink-0">Intelligence Stream</h3>
                 <div className="text-sm font-mono text-violet-300 break-words leading-relaxed flex-1 overflow-y-auto space-y-2 pr-2">
@@ -317,6 +342,17 @@ function App() {
             <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="glass w-full max-w-lg p-12 relative z-10 border-cyan-500/50 shadow-2xl">
               <h2 className="text-4xl font-black mb-10 italic uppercase tracking-tighter text-cyan-400">Configuration</h2>
               <div className="space-y-8">
+                <div>
+                  <p className="text-xs text-white/40 uppercase tracking-widest font-semibold mb-3">Linked Goal</p>
+                  <select
+                    value={configData.goalId || ''}
+                    onChange={(e) => setConfigData({...configData, goalId: e.target.value ? parseInt(e.target.value) : null})}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-sm text-white outline-none focus:border-cyan-500 appearance-none"
+                  >
+                    <option value="">— Unassigned —</option>
+                    {milestones.map(m => <option key={m.id} value={m.id}>{m.title}</option>)}
+                  </select>
+                </div>
                 <div className="grid grid-cols-4 gap-3">
                   {['critical', 'high', 'medium', 'low'].map(p => (
                     <button key={p} onClick={() => setConfigData({...configData, priority: p})} className={`py-4 rounded-2xl text-[10px] font-black uppercase border transition-all ${configData.priority === p ? 'bg-pink-600 border-pink-500 shadow-xl' : 'bg-white/5 border-white/10 text-white/40'}`}>{p}</button>
@@ -329,6 +365,7 @@ function App() {
               </div>
               <button onClick={() => { 
                   setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.map(t => t.id === showConfig ? configData : t).sort((a, b) => a.startTime.localeCompare(b.startTime)) });
+                  addLog(`TASK CONFIGURED: "${configData.title}" → Goal: ${milestones.find(m=>m.id===configData.goalId)?.title || 'Unassigned'}`);
                   setShowConfig(null);
               }} className="w-full mt-12 py-5 rounded-2xl bg-cyan-600 text-white font-black uppercase tracking-widest text-xs hover:bg-cyan-500 transition-all">APPLY</button>
             </motion.div>
