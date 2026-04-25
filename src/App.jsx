@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SubliminalEngine from './components/SubliminalEngine';
 import MilestoneTracker from './components/MilestoneTracker';
@@ -9,7 +9,7 @@ import NeuralPerformance from './components/NeuralPerformance';
 import Calendar from './components/Calendar';
 import BeastQuote from './components/BeastQuote';
 import ExecutiveSecretary from './components/ExecutiveSecretary';
-import { Activity, Zap, Shield, X, Cpu, BarChart3, Radio, Clock, Sun, Moon, Utensils, ChevronDown, Download, CheckCircle2, AlertCircle, Settings2, Trash2, Globe, Power, UploadCloud, LayoutDashboard, Calendar as CalendarIcon, Target, Menu, ChevronRight, Plus } from 'lucide-react';
+import { Activity, Zap, Shield, X, Cpu, BarChart3, Radio, Clock, Sun, Moon, Utensils, ChevronDown, Download, CheckCircle2, AlertCircle, Settings2, Trash2, Globe, Power, UploadCloud, LayoutDashboard, Calendar as CalendarIcon, Target, Menu, ChevronRight, Plus, Bell } from 'lucide-react';
 
 function App() {
   const [isFocusMode, setIsFocusMode] = useState(false);
@@ -66,6 +66,7 @@ function App() {
   const wakeUp = () => {
     const timestamp = new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Nairobi', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(new Date());
     const todayKey = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Nairobi', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    alarmedIds.current.clear();
     setDateKey(todayKey);
     setIsDayActive(true);
     localStorage.setItem('neuro_day_active', 'true');
@@ -137,6 +138,9 @@ function App() {
   const currentTasks = tasksByDate[dateKey] || [];
   const routine = { wake: "05:00", sleep: "02:00" };
 
+  const [alarmTask, setAlarmTask] = useState(null);
+  const alarmedIds = useRef(new Set());
+
   const [nairobiTime, setNairobiTime] = useState("");
   const [remainingHours, setRemainingHours] = useState(20);
 
@@ -167,6 +171,42 @@ function App() {
     }, 1000);
     return () => clearInterval(timer);
   }, []);
+
+  const playAlarm = () => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      [[0, 880], [0.32, 1100], [0.64, 880], [0.96, 1100]].forEach(([t, freq]) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0, ctx.currentTime + t);
+        gain.gain.linearRampToValueAtTime(0.55, ctx.currentTime + t + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.28);
+        osc.start(ctx.currentTime + t);
+        osc.stop(ctx.currentTime + t + 0.3);
+      });
+    } catch (_) {}
+  };
+
+  // Watch nairobiTime; fire alarm when a task's startTime is reached
+  useEffect(() => {
+    if (!isDayActive) return;
+    if (!nairobiTime.endsWith(':00')) return;          // only trigger on the :00 second
+    const hhmm = nairobiTime.slice(0, 5);
+    const tasks = tasksByDate[dateKey] || [];
+    const due = tasks.find(
+      t => t.startTime === hhmm && t.status !== 'fully' && !alarmedIds.current.has(t.id)
+    );
+    if (due) {
+      alarmedIds.current.add(due.id);
+      setAlarmTask(due);
+      playAlarm();
+      addLog(`⏰ ALARM: "${due.title}" — EXECUTE NOW.`);
+    }
+  }, [nairobiTime]);
 
   const addSingleTask = () => {
     if (!newTaskData.title.trim()) return;
@@ -503,6 +543,76 @@ function App() {
               }} className="w-full mt-12 py-5 rounded-2xl bg-cyan-600 text-white font-black uppercase tracking-widest text-xs hover:bg-cyan-500 transition-all">APPLY</button>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+
+      {/* Task Alarm Notification */}
+      <AnimatePresence>
+        {alarmTask && (
+          <motion.div
+            initial={{ opacity: 0, y: -80, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -80, scale: 0.92 }}
+            transition={{ type: 'spring', stiffness: 280, damping: 22 }}
+            className="fixed top-6 left-1/2 -translate-x-1/2 z-[500] w-full max-w-lg px-4"
+          >
+            <div className="relative rounded-3xl border border-orange-500/60 bg-[#0d0608] shadow-[0_0_60px_rgba(249,115,22,0.35)] overflow-hidden">
+              {/* animated top bar */}
+              <motion.div
+                animate={{ scaleX: [1, 0] }}
+                transition={{ duration: 30, ease: 'linear' }}
+                style={{ originX: 0 }}
+                className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500"
+              />
+              <div className="p-6 flex flex-col gap-4">
+                {/* header row */}
+                <div className="flex items-center gap-3">
+                  <motion.div
+                    animate={{ scale: [1, 1.25, 1] }}
+                    transition={{ duration: 0.6, repeat: Infinity }}
+                    className="p-2.5 rounded-2xl bg-orange-500/15 text-orange-400 shrink-0"
+                  >
+                    <Bell className="w-5 h-5" />
+                  </motion.div>
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-[0.3em] text-orange-400/70">Task Alarm</p>
+                    <p className="text-[10px] text-white/30 uppercase tracking-widest font-semibold">{alarmTask.startTime} · {alarmTask.priority}</p>
+                  </div>
+                  <button
+                    onClick={() => setAlarmTask(null)}
+                    className="ml-auto p-1.5 rounded-xl text-white/30 hover:text-white/70 hover:bg-white/8 transition-all"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* task title */}
+                <p className="text-xl font-bold text-white leading-snug tracking-tight px-1">
+                  {alarmTask.title}
+                </p>
+
+                {/* actions */}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setTasksByDate({ ...tasksByDate, [dateKey]: currentTasks.map(t => t.id === alarmTask.id ? { ...t, status: 'fully' } : t) });
+                      addLog(`✅ EXECUTED: "${alarmTask.title}"`);
+                      setAlarmTask(null);
+                    }}
+                    className="flex-1 py-3 rounded-2xl bg-orange-500 text-white font-black uppercase tracking-widest text-[10px] hover:bg-orange-400 transition-all shadow-lg"
+                  >
+                    Execute Now
+                  </button>
+                  <button
+                    onClick={() => setAlarmTask(null)}
+                    className="px-6 py-3 rounded-2xl bg-white/5 text-white/40 font-black uppercase tracking-widest text-[10px] hover:bg-white/10 transition-all border border-white/8"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
