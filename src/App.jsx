@@ -39,22 +39,69 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
   
+  const [isDayActive, setIsDayActive] = useState(() => {
+    return localStorage.getItem('neuro_day_active') === 'true';
+  });
+
   const [tasksByDate, setTasksByDate] = useState(() => {
     const saved = localStorage.getItem('neuro_tasks');
     return saved ? JSON.parse(saved) : {};
   });
   
   const [streamLogs, setStreamLogs] = useState(() => {
-    return JSON.parse(localStorage.getItem('neuro_stream') || '["Side Dashboard Initialized."]');
+    return JSON.parse(localStorage.getItem('neuro_stream') || '["Awaiting Wake Protocol."]');
   });
 
   const addLog = (msg) => {
     const timestamp = new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Nairobi', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(new Date());
     setStreamLogs(prev => {
-      const newLogs = [`[${timestamp}] ${msg}`, ...prev].slice(0, 50);
+      const newLogs = [`[${timestamp}] ${msg}`, ...prev].slice(0, 100);
       localStorage.setItem('neuro_stream', JSON.stringify(newLogs));
       return newLogs;
     });
+  };
+
+  const wakeUp = () => {
+    const timestamp = new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Nairobi', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(new Date());
+    const todayKey = new Intl.DateTimeFormat('en-CA', { timeZone: 'Africa/Nairobi', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    setDateKey(todayKey);
+    setIsDayActive(true);
+    localStorage.setItem('neuro_day_active', 'true');
+    const wakeLog = [
+      `[${timestamp}] ☀️ DAY STARTED — WAKE PROTOCOL ACTIVE.`,
+      `[${timestamp}] 📅 DATE TETHER LOCKED: ${todayKey}`,
+      `[${timestamp}] 🎯 READY FOR EXECUTION. BEGIN YOUR MISSION.`
+    ];
+    setStreamLogs(wakeLog);
+    localStorage.setItem('neuro_stream', JSON.stringify(wakeLog));
+  };
+
+  const sleepDown = () => {
+    const timestamp = new Intl.DateTimeFormat('en-US', { timeZone: 'Africa/Nairobi', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).format(new Date());
+    const todayTasks = tasksByDate[dateKey] || [];
+    const completed = todayTasks.filter(t => t.status === 'fully').length;
+    const halfway = todayTasks.filter(t => t.status === 'halfway').length;
+    const pending = todayTasks.filter(t => t.status === 'not-done').length;
+    const completedGoals = milestones.filter(m => {
+      const linked = todayTasks.filter(t => t.goalId === m.id);
+      return linked.length > 0 && linked.every(t => t.status === 'fully');
+    }).length;
+    setIsDayActive(false);
+    localStorage.setItem('neuro_day_active', 'false');
+    setDeepWorkState('idle');
+    const sleepLog = [
+      `[${timestamp}] 🌙 SLEEP PROTOCOL INITIATED. DAY CLOSED.`,
+      `[${timestamp}] 📊 END-OF-DAY SUMMARY:`,
+      `[${timestamp}]   ✅ Tasks Completed: ${completed}`,
+      `[${timestamp}]   ⏳ Tasks Halfway: ${halfway}`,
+      `[${timestamp}]   ❌ Tasks Pending: ${pending}`,
+      `[${timestamp}]   🏆 Goals Achieved Today: ${completedGoals}`,
+      `[${timestamp}]   ⏱️  Deep Work Time: ${formatTime(sessionTime)}`,
+      `[${timestamp}] 💤 REST. RECOVER. RETURN STRONGER.`,
+      ...streamLogs
+    ].slice(0, 100);
+    setStreamLogs(sleepLog);
+    localStorage.setItem('neuro_stream', JSON.stringify(sleepLog));
   };
 
   useEffect(() => {
@@ -168,8 +215,28 @@ function App() {
                 <UploadCloud className="w-5 h-5" /> BULK IMPORT
              </button>
              <div className="grid grid-cols-2 gap-3">
-                <button onClick={() => addLog("MANUAL OVERRIDE: WAKE PROTOCOL INITIATED.")} className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-white/5 border border-white/10 text-orange-400 font-semibold text-xs uppercase hover:bg-orange-500 hover:text-white transition-all"><Sun className="w-5 h-5" /> WAKE</button>
-                <button onClick={() => addLog("MANUAL OVERRIDE: SLEEP PROTOCOL INITIATED.")} className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl bg-white/5 border border-white/10 text-violet-400 font-semibold text-xs uppercase hover:bg-violet-500 hover:text-white transition-all"><Moon className="w-5 h-5" /> SLEEP</button>
+                <button
+                  onClick={wakeUp}
+                  disabled={isDayActive}
+                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-xl border font-semibold text-xs uppercase transition-all ${
+                    isDayActive
+                      ? 'bg-orange-500/20 border-orange-500/40 text-orange-400 cursor-not-allowed shadow-[0_0_20px_rgba(249,115,22,0.3)]'
+                      : 'bg-white/5 border-white/10 text-orange-400 hover:bg-orange-500 hover:text-white hover:shadow-[0_0_20px_rgba(249,115,22,0.4)]'
+                  }`}
+                >
+                  <Sun className="w-5 h-5" /> {isDayActive ? 'ACTIVE' : 'WAKE'}
+                </button>
+                <button
+                  onClick={sleepDown}
+                  disabled={!isDayActive}
+                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-xl border font-semibold text-xs uppercase transition-all ${
+                    !isDayActive
+                      ? 'bg-white/3 border-white/5 text-white/20 cursor-not-allowed'
+                      : 'bg-white/5 border-white/10 text-violet-400 hover:bg-violet-500 hover:text-white hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]'
+                  }`}
+                >
+                  <Moon className="w-5 h-5" /> SLEEP
+                </button>
              </div>
           </div>
 
