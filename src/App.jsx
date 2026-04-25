@@ -326,7 +326,7 @@ function App() {
                      }}
                    />
                </div>
-               <div className="flex flex-col gap-12 h-full xl:h-[850px]">
+               <div className="flex flex-col gap-6 h-full xl:h-[850px]">
                    <ExecutiveSecretary tasks={currentTasks} remainingHours={remainingHours} />
                    <BeastQuote />
                    <div className="glass p-6 flex-1 flex flex-col items-center justify-center">
